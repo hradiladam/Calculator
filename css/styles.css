@@ -1,22 +1,21 @@
 body {
-    font-family: 'Roboto', Helvetica, sans-serif;
+    font-family: Arial, sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     margin: 0;
-    background-color: #fefefe;
-    color: #4a4a4a;
+    background-color: #e2e2e2;
 }
 
 .calculator {
     display: grid;
     gap: 1rem;
-    grid-template-columns: repeat(4, 4.5rem);
-    grid-template-rows: 3rem repeat(6, 4.8rem);
-    background-color: #f1f1f1;
+    grid-template-columns: repeat(4, 4.5rem); 
+    grid-auto-rows: 4.8rem;
+    background-color: #dfdfdf;
     padding: 1.5rem;
-    border-radius: 12px;
+    border-radius: 3px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
@@ -26,18 +25,20 @@ body {
     grid-row: span 2;
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Space between history and result */
-    background-color: #f8f8f8;
-    font-size: 2.5rem;
+    justify-content: space-between;
+    background-color: #e7e7e7;
+    color: #5c5c5c;
+    font-size: 2.7rem;
     text-align: right;
-    border-radius: 8px;
+    border-radius: 6px;
     padding: 12px;
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
     margin-bottom: 0.5rem;
 }
 
 #recent-history {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
+    color: #929292;
 }
 
 .button,
@@ -45,26 +46,30 @@ body {
     font-family: 'Roboto';
     border-radius: 8px;
     border: none;
-    font-size: 1.4rem;
+    font-size: 1.5rem;
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
     color: #585858;
-    background-color: #e7e7e7;
+    background-color: #f0f0f0;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.operator {
-    background-color: #d4e6f1;
-    font-weight: 500;
-    color: #305f7e;
+.button:hover {
+    background-color: #cacaca;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
-.button:hover {
-    background-color: #e9ecef;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+.operator {
+    background-color: #cce2f0;
+    color: #3f3f3f;
+    font-weight: 500;
+}
+
+.operator:hover {
+    background-color: #b0d4eb;
 }
 
 .button:active {
@@ -72,8 +77,23 @@ body {
     transition: transform 0.2s ease;
 }
 
+.additional {
+    background-color: #bdbdbd;
+    font-weight: 500;
+}
+
+.additional:hover {
+    background-color: #cfcfcf;
+}
+
+
+
 .button:nth-child(21) {
-    background: #c7e0f1;
+    background: #acd6f1;
     font-size: 1.8rem;
     color: #4a4a4a;
+}
+
+.button:nth-child(21):hover {
+    background: #8fbdeb;
 }
