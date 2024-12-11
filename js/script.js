@@ -14,34 +14,63 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
 
-  
+    // Function to clear all inputs
+    const clearAll = () => {
+        currentInput = ''; // Reset the current input
+        recentHistory = ''; // Reset the recent history
+    };
+
+    
+    // Function to delete last character
+    const deleteLastChar = () => {
+        currentInput = currentInput.slice(0, -1); // Return the currentIput minus the last character
+    };
+
+
+    // Function to evaluate calculation
+    const evaluateExpression = () => {
+        try {expression = currentInput
+                .replace(/×/g, '*') // Change '×' into '*' for eval()
+                .replace(/÷/g, '/'); // Change '÷' into '/' for eval()
+            recentHistory = `${currentInput}=`; // Add '=' at the end of recentHistory for better visual effect
+            currentInput = eval(expression).toString(); // Evaluate the expression and store the result as string
+            lastActionWasEquals = true; // Change flag to mark that the last action was '='
+        } catch {
+            currentInput = 'error you dumbass' // Motivational error message
+        }
+    };
+
+
+    // Append buttons' values to current input
+    const appendValue = (value) => {
+        if (lastActionWasEquals) {
+            currentInput = value;
+            recentHistory = '';
+            lastActionWasEquals = false;
+        }
+        
+        else {
+            currentInput += value;
+        };
+    };
+
+
     // Function to handle button clicks
     const handleButtons = (value) => {
-        if (value === 'AC') {
-            currentInput = '';
-            recentHistory = '';
-        } else if (value === '⌫') {
-            currentInput = currentInput.slice(0, -1);
-        } else if (value === '=') {
-            try {
-                const correctedInput = currentInput
-                    .replace(/×/g, '*')
-                    .replace(/÷/g, '/');
-                recentHistory = `${currentInput}=`;
-                currentInput = eval(correctedInput).toString();
-                lastActionWasEquals = true;
-            } catch (error) {
-                currentInput = 'Error';
-            }
-        } else {
-            if (lastActionWasEquals) {
-                currentInput = value;
-                recentHistory = '';
-                lastActionWasEquals = false;
-            } else {
-            currentInput += value;
-            };
+        switch (value) {
+            case 'AC':
+                clearAll(); // Clears all inputs
+                break;
+            case '⌫':
+                deleteLastChar(); // Deletes last character
+                break;
+            case '=':
+                evaluateExpression(); // Evaluates expression (modified currentInput)
+                break;
+            default:
+                appendValue(value); // Appends other buttons value to currentInput
         };
+
 
         updateDisplay(); // Update the display after each press
     };
@@ -50,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to add event listeners to buttons and connect buttons data-value with JS
     document.querySelectorAll('button').forEach((button) => {
         button.addEventListener('click', () => {
-            handleButtons(button.dataset.value);  
+            handleButtons(button.dataset.value);  // Grabs custom value in data- of html button elements ad passes it as an argument
         });
     });
 
@@ -60,7 +89,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-
+// % DOESNT WORK YET
+// ( ) DOESNT WORK YET
+// WHEN I PRESS AN OPERATOR AFTER AN OPERATOR THE FIRST ONE MUST DISAPPEAR
 // IF 0 IS PRESSED AND THAN ANOTHER NUMBER IS PRESSED, I WANT THE 0 TO GET DELETED FROM THE RESULT DISPLAY, BUT IF + - / * IS PRESSED FIRST, I WANT THE INITIAL DEFAULT ZERO TO BE TAKEN INTO ACCOUNT
-// IF 0 IS PRESSED MULTIPLE TIMES FIRST, I THE CLICK TO BE IGNORED SO THER EISNT A STREAM OF ZEROES
-// IF + - / * IS PRESSED MULTIPOLE TIMES, IT SHOULD ALWAYS IGNORE ADDITIONAL CLICKS
+// IF 0 IS PRESSED MULTIPLE TIMES FIRST, I WANT THE CLICK TO BE IGNORED SO THER EISNT A STREAM OF ZEROES
+// IF + - / * IS PRESSED AFTER = MULTIPOLE TIMES, IT SHOULD ALWAYS IGNORE ADDITIONAL CLICKS, IF A + - / * IS PRESSED CALCULATION SHOULD CONTINUE, ONLY IF A NUMBER IS PRESSED AFTER =, IT SHOULD RESET. 
