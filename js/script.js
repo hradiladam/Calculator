@@ -24,8 +24,11 @@ document.addEventListener('DOMContentLoaded', () => {
             currentInput = currentInput.slice(0, -1);
         } else if (value === '=') {
             try {
+                const correctedInput = currentInput
+                    .replace(/×/g, '*')
+                    .replace(/÷/g, '/');
                 recentHistory = `${currentInput}=`;
-                currentInput = eval(currentInput).toString();
+                currentInput = eval(correctedInput).toString();
                 lastActionWasEquals = true;
             } catch (error) {
                 currentInput = 'Error';
@@ -58,6 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-// IF 0 IS PRESSED AND THAN ANOTHER NUMBER IS PRESSED, I WANT THE 0 TO GET DELETED FROM THE RESULT DISPLAY
-// IF + - / * IS PRESSED FIRST, I WANT THE INITIAL DEFAULT ZERO TO BE TAKEN INTO ACCOUNT
-// IF + - / * OR 0 IS PRESSED MULTIPLE TIMES, I WANT ONLY THE FIRST CLICK TO REGISTER AND OTEHR BE IGNORED
+// IF 0 IS PRESSED AND THAN ANOTHER NUMBER IS PRESSED, I WANT THE 0 TO GET DELETED FROM THE RESULT DISPLAY, BUT IF + - / * IS PRESSED FIRST, I WANT THE INITIAL DEFAULT ZERO TO BE TAKEN INTO ACCOUNT
+// IF 0 IS PRESSED MULTIPLE TIMES FIRST, I THE CLICK TO BE IGNORED SO THER EISNT A STREAM OF ZEROES
+// IF + - / * IS PRESSED MULTIPOLE TIMES, IT SHOULD ALWAYS IGNORE ADDITIONAL CLICKS
