@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentInput = '0'; // What user types
     let recentHistory = ''; // Stores the previous operation
 
-    const operators = ['+', '−', '×', '÷']; // List of operators
+    const operators = ['+', '-', '×', '÷']; // List of operators
 
 
     // Function to update the display of calculator
@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to clear all inputs
     const clearAll = () => {
-        currentInput = ''; // Reset the current input
+        currentInput = '0'; // Reset the current input
         recentHistory = ''; // Reset the recent history
     };
 
@@ -35,7 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const expression = currentInput
                 .replace(/×/g, '*') // Change '×' into '*' for math.js
                 .replace(/÷/g, '/') // Change '÷' into '/' for math.js
-                .replace(/−/g, '-'); // Change '−' into '-' for math.js
 
             // Use math.js to evaluate the expression
             const result = math.evaluate(expression); // math.evaluate() evaluates the expression safely
@@ -52,8 +51,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function for appending values of numbers, parentheses and decimal point
     const appendValue = (value) => {
     
+        // Remove the default zero if the user starts typing a number
+            if (currentInput === '0' && /[0-9]/.test(value)) { // Checks if the value is a number for 0 to 9
+                currentInput = value; // Start the number without a leading zero
+                return;
+            }
+
         // Logic for decimal points
-        if (value === '.') {
+        else if (value === '.') {
             // Takes initial 0 always into account
             if (currentInput === '0') {
                 currentInput += value
