@@ -2,10 +2,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const recentHistoryDisplay = document.getElementById('recent-history'); // Get recent-history element
     const resultDisplay = document.getElementById('result'); // Get result element
 
-    let currentInput = ''; // What user types
+    let currentInput = '0'; // What user types
     let recentHistory = ''; // Stores the previous operation
 
     const operators = ['+', '−', '×', '÷']; // List of operators
+
 
     // Function to update the display of calculator
     const updateDisplay = () => {
@@ -13,16 +14,19 @@ document.addEventListener('DOMContentLoaded', () => {
         resultDisplay.textContent = currentInput || '0'; // Show either current input or '0' in result display
     };
 
+
     // Function to clear all inputs
     const clearAll = () => {
         currentInput = ''; // Reset the current input
         recentHistory = ''; // Reset the recent history
     };
 
+
     // Function to delete last character
     const deleteLastChar = () => {
         currentInput = currentInput.slice(0, -1); // Return the current input minus the last character
     };
+
 
     // Function to evaluate calculation
     const evaluateExpression = () => {
@@ -43,17 +47,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Append buttons' values to current input
-    const appendValue = (value) => {
 
+
+    // Function for appending values of numbers, parentheses and decimal point
+    const appendValue = (value) => {
+    
         // Logic for decimal points
         if (value === '.') {
-            // Check if the last character is a number, and the current input doesn't already have a decimal point
-            // Also, prevent decimal after an operator or parentheses
-            if (/[0-9]$/.test(currentInput) && !/[+\-×÷=()]$/.test(currentInput)) { // checks if the currentInput string does not end with one of the operators or parentheses
-                currentInput += value;
+            // Check if the last character is a number and the current input doesn't already have a decimal point
+            // Also, ensure the last character is not an operator or parentheses
+            if (/[0-9]$/.test(currentInput) && !/[+\-×÷=()]$/.test(currentInput)) {
+                // Check if there's no decimal already in the number
+                if (!/\.[0-9]*$/.test(currentInput)) {
+                    currentInput += value; // Append the decimal point
+                }
             } else {
-                return;
+                return; // Prevent adding decimal if conditions are not met
             }
         }
         
@@ -88,6 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    
     // Function to handle button clicks
     const handleButtons = (value) => {
         switch (value) {

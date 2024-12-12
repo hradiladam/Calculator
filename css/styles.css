@@ -36,6 +36,14 @@ body {
     margin-bottom: 0.5rem;
 }
 
+#result {
+    overflow-y: hidden;
+    white-space: nowrap;
+    text-overflow: clip;
+}
+
+
+
 #recent-history {
     font-size: 1.3rem;
     color: #929292;
