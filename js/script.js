@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentInput = '0'; // What user types
     let recentHistory = ''; // Stores the previous operation
+    let lastButtonWasEquals = false; // Flag to track if the last button pressed was '='
 
     const operators = ['+', '-', '×', '÷']; // List of operators
 
@@ -34,14 +35,24 @@ document.addEventListener('DOMContentLoaded', () => {
             // Replace operators for math.js compatibility
             const expression = currentInput
                 .replace(/×/g, '*') // Change '×' into '*' for math.js
-                .replace(/÷/g, '/') // Change '÷' into '/' for math.js
-
+                .replace(/÷/g, '/'); // Change '÷' into '/' for math.js
+    
             // Use math.js to evaluate the expression
             const result = math.evaluate(expression); // math.evaluate() evaluates the expression safely
-
+    
+            // Check the length of the integer part for deciding the format (CHAT GPT CREATION, because I don't understand how Math.js works yet)
+            const integerPart = Math.abs(result).toFixed(0); // Get the integer part as a string
+            const formattedResult =
+                integerPart.length > 11 // Check if the integer part has more than 11 digits
+                    ? result.toExponential(5) // Use scientific notation with 5 significant digits
+                    : Number(result).toFixed(14).replace(/\.?0+$/, ''); // Use fixed-point and remove trailing zeros for others
+    
             recentHistory = `${currentInput}=`; // Add '=' at the end of recentHistory for better visual effect
-            currentInput = math.format(result, { precision: 14 }); // Format result to avoid floating-point issues
-        } catch (error) {
+            currentInput = formattedResult; // Store formatted result in currentInput
+            lastButtonWasEquals = true; // Set the flag to true
+        } 
+        
+        catch (error) {
             currentInput = 'error'; // If math.js fails, show an error message
         }
     };
@@ -51,11 +62,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function for appending values of numbers, parentheses and decimal point
     const appendValue = (value) => {
     
+        // If last action was '=' and the value is a number, start new input
+        if (lastButtonWasEquals && /[0-9]/.test(value)) {
+            currentInput = value; // Replace current input with the new number
+            lastButtonWasEquals = false; // Reset the flag
+            return;
+        }
+
         // Remove the default zero if the user starts typing a number
-            if (currentInput === '0' && /[0-9]/.test(value)) { // Checks if the value is a number for 0 to 9
-                currentInput = value; // Start the number without a leading zero
-                return;
-            }
+        else if (currentInput === '0' && /[0-9]/.test(value)) { // Checks if the value is a number for 0 to 9
+            currentInput = value; // Start the number without a leading zero
+            return;
+        }
 
         // Logic for decimal points
         else if (value === '.') {
