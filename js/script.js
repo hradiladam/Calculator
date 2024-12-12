@@ -45,7 +45,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Append buttons' values to current input
     const appendValue = (value) => {
-        if (value === '( )') {
+
+        // Logic for decimal points
+        if (value === '.') {
+            // Check if the last character is a number, and the current input doesn't already have a decimal point
+            // Also, prevent decimal after an operator or parentheses
+            if (/[0-9]$/.test(currentInput) && !/[+\-×÷=()]$/.test(currentInput)) { // checks if the currentInput string does not end with one of the operators or parentheses
+                currentInput += value;
+            } else {
+                return;
+            }
+        }
+        
+        // Logic for parentheses
+        else if (value === '( )') {
             // Handle parentheses
             if (currentInput === '' || operators.includes(currentInput.slice(-1))) {
                 currentInput += '('; // Open parentheses if the current input is empty or ends with an operator
@@ -59,13 +72,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     currentInput += '('; // Otherwise, add opening parentheses
                 }
             }
-        } else if (operators.includes(value)) { // Checks if the value is an operator
+        } 
+        
+        // Prevents repeated operators
+        else if (operators.includes(value)) { // Checks if the value is an operator
             if (operators.includes(currentInput.slice(-1))) { // If the last character is already an operator
                 currentInput = currentInput.slice(0, -1) + value; // Replace the last operator with the new one
             } else {
                 currentInput += value; // Append the operator to the current input
             }
-        } else {
+        } 
+        
+        else {
             currentInput += value; // Append non-operator values (numbers, etc.)
         }
     };
