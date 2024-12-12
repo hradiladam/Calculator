@@ -149,10 +149,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to add event listeners to buttons and connect buttons data-value with JS
     document.querySelectorAll('button').forEach((button) => {
-        button.addEventListener('click', () => {
-            handleButtons(button.dataset.value);  // Grabs custom value in data- of HTML button elements and passes it as an argument
-        });
+        // Only add event listener to buttons that are not the theme switch button
+        if (button.id !== 'theme-switch') {
+            button.addEventListener('click', () => {
+                handleButtons(button.dataset.value);  // Grabs custom value in data- of HTML button elements and passes it as an argument
+            });
+        }
     });
 
     updateDisplay(); // Runs the function to update the display
+
+
+    // Function to switch theme betwen light and dark
+    const switchTheme = () => {
+        const body = document.body;
+        const themeSwitchButton = document.querySelector('#theme-switch');
+
+        body.classList.toggle('dark-theme')
+        if (body.classList.contains('dark-theme')) {
+            themeSwitchButton.innerHTML = '<i class="fa-regular fa-sun"></i>';
+        } else {
+            themeSwitchButton.innerHTML = '<i class="fa-solid fa-moon"></i>';
+        }
+    }
+
+    const themeSwitchButton = document.getElementById('theme-switch');
+    themeSwitchButton.addEventListener('click', switchTheme);
+
 });
+
+
