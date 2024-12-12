@@ -54,14 +54,21 @@ document.addEventListener('DOMContentLoaded', () => {
     
         // Logic for decimal points
         if (value === '.') {
+            // Takes initial 0 always into account
+            if (currentInput === '0') {
+                currentInput += value
+            } 
+            
             // Check if the last character is a number and the current input doesn't already have a decimal point
             // Also, ensure the last character is not an operator or parentheses
-            if (/[0-9]$/.test(currentInput) && !/[+\-×÷=()]$/.test(currentInput)) {
+            else if (/[0-9]$/.test(currentInput) && !/[+\-×÷=()]$/.test(currentInput)) {
                 // Check if there's no decimal already in the number
                 if (!/\.[0-9]*$/.test(currentInput)) {
                     currentInput += value; // Append the decimal point
                 }
-            } else {
+            } 
+            
+            else {
                 return; // Prevent adding decimal if conditions are not met
             }
         }
