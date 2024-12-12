@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = math.evaluate(expression); // math.evaluate() evaluates the expression safely
 
             recentHistory = `${currentInput}=`; // Add '=' at the end of recentHistory for better visual effect
-            currentInput = math.format(result, { precision: 14 }); // Format result to avoid floating-point issues
+            currentInput = math.format(result, { precision: 14 }); // Format result to avoid floating-point issues. CHAT GPT ADVISED HOTFIX SINCE I CAN'T MAKE DECIMAL.JS WORK
         } catch (error) {
             currentInput = 'error'; // If math.js fails, show an error message
         }
