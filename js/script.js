@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = math.evaluate(expression); // math.evaluate() evaluates the expression safely
 
             recentHistory = `${currentInput}=`; // Add '=' at the end of recentHistory for better visual effect
-            currentInput = math.format(result, { precision: 14 }); // Format result to avoid floating-point issues. CHAT GPT ADVISED HOTFIX SINCE I CAN'T MAKE DECIMAL.JS WORK
+            currentInput = math.format(result, { precision: 14 }); // Format result to avoid floating-point issues
         } catch (error) {
             currentInput = 'error'; // If math.js fails, show an error message
         }
@@ -45,7 +45,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Append buttons' values to current input
     const appendValue = (value) => {
-        if (operators.includes(value)) { // Checks if the value is an operator
+        if (value === '( )') {
+            // Handle parentheses
+            if (currentInput === '' || operators.includes(currentInput.slice(-1))) {
+                currentInput += '('; // Open parentheses if the current input is empty or ends with an operator
+            } else {
+                // If parentheses already open, close them
+                const openParentheses = (currentInput.match(/\(/g) || []).length;
+                const closedParentheses = (currentInput.match(/\)/g) || []).length;
+                if (openParentheses > closedParentheses) {
+                    currentInput += ')'; // Close parentheses if there are unmatched opening parentheses
+                } else {
+                    currentInput += '('; // Otherwise, add opening parentheses
+                }
+            }
+        } else if (operators.includes(value)) { // Checks if the value is an operator
             if (operators.includes(currentInput.slice(-1))) { // If the last character is already an operator
                 currentInput = currentInput.slice(0, -1) + value; // Replace the last operator with the new one
             } else {
