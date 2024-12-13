@@ -61,70 +61,64 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function for appending values of numbers, parentheses and decimal point
     const appendValue = (value) => {
+        // If the last button was "=", and a number is pressed, reset the input
+        if (lastButtonWasEquals) {
+            if (/[0-9]/.test(value)) {
+                currentInput = value; // Start fresh with the number
+            } else {
+                currentInput += value; // Allow appending an operator or special character
+            }
+            lastButtonWasEquals = false;
+            return;
+        }
     
-        // If last action was '=' and the value is a number, start new input
-        if (lastButtonWasEquals && /[0-9]/.test(value)) {
-            currentInput = value; // Replace current input with the new number
-            lastButtonWasEquals = false; // Reset the flag
+        // If the current input is just "0" and a number is pressed, replace it
+        if (currentInput === '0' && /[0-9]/.test(value)) {
+            currentInput = value;
             return;
         }
-
-        // Remove the default zero if the user starts typing a number
-        else if (currentInput === '0' && /[0-9]/.test(value)) { // Checks if the value is a number for 0 to 9
-            currentInput = value; // Start the number without a leading zero
+    
+        // Handle appending numbers after an operator
+        if (operators.includes(currentInput.slice(-1)) && /[0-9]/.test(value)) {
+            currentInput += value; // Append the number directly after the operator
             return;
         }
-
-        // Logic for decimal points
-        else if (value === '.') {
-            // Takes initial 0 always into account
-            if (currentInput === '0') {
-                currentInput += value
-            } 
-            
-            // Check if the last character is a number and the current input doesn't already have a decimal point
-            // Also, ensure the last character is not an operator or parentheses
-            else if (/[0-9]$/.test(currentInput) && !/[+\-×÷=()]$/.test(currentInput)) {
-                // Check if there's no decimal already in the number
-                if (!/\.[0-9]*$/.test(currentInput)) {
-                    currentInput += value; // Append the decimal point
-                }
-            } 
-            
-            else {
-                return; // Prevent adding decimal if conditions are not met
-            }
-        }
-        
-        // Logic for parentheses
-        else if (value === '( )') {
-            // Handle parentheses
-            if (currentInput === '' || operators.includes(currentInput.slice(-1))) {
-                currentInput += '('; // Open parentheses if the current input is empty or ends with an operator
+    
+        // Prevent multiple consecutive operators
+        if (operators.includes(value)) {
+            if (operators.includes(currentInput.slice(-1))) {
+                currentInput = currentInput.slice(0, -1) + value; // Replace the last operator
             } else {
-                // If parentheses already open, close them
-                const openParentheses = (currentInput.match(/\(/g) || []).length;
-                const closedParentheses = (currentInput.match(/\)/g) || []).length;
-                if (openParentheses > closedParentheses) {
-                    currentInput += ')'; // Close parentheses if there are unmatched opening parentheses
-                } else {
-                    currentInput += '('; // Otherwise, add opening parentheses
-                }
+                currentInput += value; // Append the new operator
             }
-        } 
-        
-        // Prevents repeated operators
-        else if (operators.includes(value)) { // Checks if the value is an operator
-            if (operators.includes(currentInput.slice(-1))) { // If the last character is already an operator
-                currentInput = currentInput.slice(0, -1) + value; // Replace the last operator with the new one
-            } else {
-                currentInput += value; // Append the operator to the current input
-            }
-        } 
-        
-        else {
-            currentInput += value; // Append non-operator values (numbers, etc.)
+            return;
         }
+    
+        // Logic for handling decimal points
+        if (value === '.') {
+            const lastNumber = currentInput.split(/[\+\-\×\÷]/).pop(); // Get the last number segment
+            if (!lastNumber.includes('.')) {
+                currentInput += value; // Append the decimal point only if not already present
+            }
+            return;
+        }
+    
+        // Handle parentheses
+        if (value === '( )') {
+            const openParentheses = (currentInput.match(/\(/g) || []).length;
+            const closedParentheses = (currentInput.match(/\)/g) || []).length;
+            if (operators.includes(currentInput.slice(-1)) || currentInput === '') {
+                currentInput += '('; // Add an opening parenthesis
+            } else if (openParentheses > closedParentheses) {
+                currentInput += ')'; // Add a closing parenthesis
+            } else {
+                currentInput += '('; // Default to adding an opening parenthesis
+            }
+            return;
+        }
+    
+        // Append all other valid values
+        currentInput += value;
     };
 
     
