@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const clearAll = () => {
         currentInput = '0'; // Reset the current input
         recentHistory = ''; // Reset the recent history
+        lastButtonWasEquals = false; // Reset the equals flag
     };
 
 
@@ -27,36 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const deleteLastChar = () => {
         currentInput = currentInput.slice(0, -1); // Return the current input minus the last character
     };
-
-
-    // Function to evaluate calculation
-    const evaluateExpression = () => {
-        try {
-            // Replace operators for math.js compatibility
-            const expression = currentInput
-                .replace(/×/g, '*') // Change '×' into '*' for math.js
-                .replace(/÷/g, '/'); // Change '÷' into '/' for math.js
-    
-            // Use math.js to evaluate the expression
-            const result = math.evaluate(expression); // math.evaluate() evaluates the expression safely
-    
-            // Check the length of the integer part for deciding the format (CHAT GPT CREATION, because I don't understand how Math.js works yet)
-            const integerPart = Math.abs(result).toFixed(0); // Get the integer part as a string
-            const formattedResult =
-                integerPart.length > 11 // Check if the integer part has more than 11 digits
-                    ? result.toExponential(5) // Use scientific notation with 5 significant digits
-                    : Number(result).toFixed(14).replace(/\.?0+$/, ''); // Use fixed-point and remove trailing zeros for others
-    
-            recentHistory = `${currentInput}=`; // Add '=' at the end of recentHistory for better visual effect
-            currentInput = formattedResult; // Store formatted result in currentInput
-            lastButtonWasEquals = true; // Set the flag to true
-        } 
-        
-        catch (error) {
-            currentInput = 'error'; // If math.js fails, show an error message
-        }
-    };
-
 
 
     // Function for appending values of numbers, parentheses and decimal point
@@ -68,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 currentInput += value; // Allow appending an operator or special character
             }
-            lastButtonWasEquals = false;
+            lastButtonWasEquals = false; // Reset the equals flag
             return;
         }
     
@@ -117,6 +88,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const openParentheses = (currentInput.match(/\(/g) || []).length;
             const closedParentheses = (currentInput.match(/\)/g) || []).length;
     
+            if (lastButtonWasEquals) {
+                currentInput = '('; // When equals was pressed, reset the input to '('
+                lastButtonWasEquals = false; // Reset flag after using parentheses
+                return;
+            }
+
             // Replace default zero with '('
             if (currentInput === '0') {
                 currentInput = '(';
@@ -144,7 +121,36 @@ document.addEventListener('DOMContentLoaded', () => {
         currentInput += value;
     };
 
+
+    // Function to evaluate calculation
+    const evaluateExpression = () => {
+        try {
+            // Replace operators for math.js compatibility
+            const expression = currentInput
+                .replace(/×/g, '*') // Change '×' into '*' for math.js
+                .replace(/÷/g, '/'); // Change '÷' into '/' for math.js
     
+            // Use math.js to evaluate the expression
+            const result = math.evaluate(expression); // math.evaluate() evaluates the expression safely
+    
+            // Check the length of the integer part for deciding the format (CHAT GPT CREATION, because I don't understand how Math.js works yet)
+            const integerPart = Math.abs(result).toFixed(0); // Get the integer part as a string
+            const formattedResult =
+                integerPart.length > 11 // Check if the integer part has more than 11 digits
+                    ? result.toExponential(5) // Use scientific notation with 5 significant digits
+                    : Number(result).toFixed(14).replace(/\.?0+$/, ''); // Use fixed-point and remove trailing zeros for others
+    
+            recentHistory = `${currentInput}=`; // Add '=' at the end of recentHistory for better visual effect
+            currentInput = formattedResult; // Store formatted result in currentInput
+            lastButtonWasEquals = true; // Set the flag to true
+        } 
+        catch (error) {
+            currentInput = 'error'; // If math.js fails, show an error message
+        }
+    };
+
+
+
     // Function to handle button clicks
     const handleButtons = (value) => {
         switch (value) {
@@ -177,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateDisplay(); // Runs the function to update the display
 
 
-    // Function to switch theme betwen light and dark
+    // Function to switch theme between light and dark
     const switchTheme = () => {
         const body = document.body;
         const themeSwitchButton = document.querySelector('#theme-switch');
@@ -194,5 +200,3 @@ document.addEventListener('DOMContentLoaded', () => {
     themeSwitchButton.addEventListener('click', switchTheme);
 
 });
-
-
