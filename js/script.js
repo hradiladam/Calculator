@@ -78,23 +78,32 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
     
-        // Handle appending numbers after an operator
-        if (operators.includes(currentInput.slice(-1)) && /[0-9]/.test(value)) {
-            currentInput += value; // Append the number directly after the operator
+        // Prevent operator after '(' (allowing '-' after it)
+        if (operators.includes(value) && currentInput.slice(-1) === '(' && value !== '-') {
             return;
         }
     
         // Prevent multiple consecutive operators
-        if (operators.includes(value)) {
-            if (operators.includes(currentInput.slice(-1))) {
-                currentInput = currentInput.slice(0, -1) + value; // Replace the last operator
+        if (operators.includes(value) || value === '%') {
+            if (operators.includes(currentInput.slice(-1)) || currentInput.slice(-1) === '%') {
+                currentInput = currentInput.slice(0, -1) + value; // Replace the last operator or '%'
             } else {
-                currentInput += value; // Append the new operator
+                currentInput += value; // Append the new operator or '%'
             }
             return;
         }
     
-        // Logic for handling decimal points
+        // Prevent operator after number in parentheses (e.g., "3 + ( )")
+        if (currentInput.slice(-1) === '(' && operators.includes(value)) {
+            return;
+        }
+    
+        // Prevent operator after closing parentheses
+        if (currentInput.slice(-1) === ')' && operators.includes(value)) {
+            return;
+        }
+    
+        // Handle decimal points
         if (value === '.') {
             const lastNumber = currentInput.split(/[\+\-\×\÷]/).pop(); // Get the last number segment
             if (!lastNumber.includes('.')) {
@@ -107,13 +116,27 @@ document.addEventListener('DOMContentLoaded', () => {
         if (value === '( )') {
             const openParentheses = (currentInput.match(/\(/g) || []).length;
             const closedParentheses = (currentInput.match(/\)/g) || []).length;
-            if (operators.includes(currentInput.slice(-1)) || currentInput === '') {
-                currentInput += '('; // Add an opening parenthesis
-            } else if (openParentheses > closedParentheses) {
-                currentInput += ')'; // Add a closing parenthesis
-            } else {
-                currentInput += '('; // Default to adding an opening parenthesis
+    
+            // Replace default zero with '('
+            if (currentInput === '0') {
+                currentInput = '(';
+                return;
             }
+    
+            // Allow adding an opening parenthesis at any time
+            if (operators.includes(currentInput.slice(-1)) || currentInput.slice(-1) === '(' || currentInput === '') {
+                currentInput += '('; // Add an opening parenthesis
+                return;
+            }
+    
+            // Add a closing parenthesis if it balances the existing open parentheses
+            if (openParentheses > closedParentheses) {
+                currentInput += ')';
+                return;
+            }
+    
+            // Default to adding an opening parenthesis
+            currentInput += '(';
             return;
         }
     

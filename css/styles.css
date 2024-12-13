@@ -63,7 +63,7 @@ body {
 }
 
 .button:hover {
-    background-color: #cfcfcf;
+    background-color: #e2e2e2;
     transition: background-color 0.3s ease, box-shadow 0.3s ease
 }
 
