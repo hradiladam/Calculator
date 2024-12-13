@@ -28,7 +28,7 @@ body {
     justify-content: space-between;
     background-color: #f1f1f1;
     color: #5c5c5c;
-    font-size: 2.5rem;
+    font-size: 2.2rem;
     text-align: right;
     border-radius: 6px;
     padding: 0.75rem;
@@ -80,7 +80,7 @@ body {
 }
 
 .operator:hover {
-    background-color: #92ccf5;
+    background-color: #9cd1f7;
 }
 
 .additional {
@@ -94,13 +94,13 @@ body {
 }
 
 .button:nth-child(21) {
-    background: #a8d7f8;
+    background: #eaec72;
     color: #5c5c5c;
     font-size: 1.8rem;
 }
 
 .button:nth-child(21):hover {
-    background: #68bbf1;
+    background: #f2f54a;
 }
 
 /* Styling of the change theme button  */
@@ -159,7 +159,7 @@ body.dark-theme #result {
 body.dark-theme .button {
     background-color: #424242;
     color: #e2e2e2;
-    box-shadow: 0 0 3px rgba(190, 190, 190, 0.45);
+    box-shadow: 0 0 3px rgba(221, 221, 221, 0.45);
 }
 
 body.dark-theme .button:hover {
@@ -168,7 +168,7 @@ body.dark-theme .button:hover {
 
 body.dark-theme .button:active {
     transform: scale(0.99);
-    outline: 1px solid #d3d3d3;
+    outline: 1px solid #dfdfdf;
 }
 
 body.dark-theme .operator {
@@ -195,13 +195,13 @@ body.dark-theme #theme-switch {
 }
 
 body.dark-theme .button:nth-child(21) {
-    background: #34a838;
+    background: #9c9703;
     color: #dadada;
     font-size: 1.8rem;
 }
 
 body.dark-theme .button:nth-child(21):hover {
-    background: #1b851e;
+    background: #8f8d3f;
 }
 
 body.dark-theme #theme-switch:hover {
