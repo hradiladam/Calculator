@@ -30,98 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
 
-    // Function for appending values of numbers, parentheses and decimal point
-    const appendValue = (value) => {
-        // If the last button was "=", and a number is pressed, reset the input
-        if (lastButtonWasEquals) {
-            if (/[0-9]/.test(value)) {
-                currentInput = value; // Start fresh with the number
-            } else {
-                currentInput += value; // Allow appending an operator or special character
-            }
-            lastButtonWasEquals = false; // Reset the equals flag
-            return;
-        }
-    
-        // If the current input is just "0" and a number is pressed, replace it
-        if (currentInput === '0' && /[0-9]/.test(value)) {
-            currentInput = value;
-            return;
-        }
-    
-        // Prevent operator after '(' (allowing '-' after it)
-        if (operators.includes(value) && currentInput.slice(-1) === '(' && value !== '-') {
-            return;
-        }
-    
-        // Prevent multiple consecutive operators
-        if (operators.includes(value) || value === '%') {
-            if (operators.includes(currentInput.slice(-1)) || currentInput.slice(-1) === '%') {
-                currentInput = currentInput.slice(0, -1) + value; // Replace the last operator or '%'
-            } else {
-                currentInput += value; // Append the new operator or '%'
-            }
-            return;
-        }
-    
-        // Prevent operator after number in parentheses (e.g., "3 + ( )")
-        if (currentInput.slice(-1) === '(' && operators.includes(value)) {
-            return;
-        }
-    
-        // Prevent operator after closing parentheses
-        if (currentInput.slice(-1) === ')' && operators.includes(value)) {
-            return;
-        }
-    
-        // Handle decimal points
-        if (value === '.') {
-            const lastNumber = currentInput.split(/[\+\-\×\÷]/).pop(); // Get the last number segment
-            if (!lastNumber.includes('.')) {
-                currentInput += value; // Append the decimal point only if not already present
-            }
-            return;
-        }
-    
-        // Handle parentheses
-        if (value === '( )') {
-            const openParentheses = (currentInput.match(/\(/g) || []).length;
-            const closedParentheses = (currentInput.match(/\)/g) || []).length;
-    
-            if (lastButtonWasEquals) {
-                currentInput = '('; // When equals was pressed, reset the input to '('
-                lastButtonWasEquals = false; // Reset flag after using parentheses
-                return;
-            }
-
-            // Replace default zero with '('
-            if (currentInput === '0') {
-                currentInput = '(';
-                return;
-            }
-    
-            // Allow adding an opening parenthesis at any time
-            if (operators.includes(currentInput.slice(-1)) || currentInput.slice(-1) === '(' || currentInput === '') {
-                currentInput += '('; // Add an opening parenthesis
-                return;
-            }
-    
-            // Add a closing parenthesis if it balances the existing open parentheses
-            if (openParentheses > closedParentheses) {
-                currentInput += ')';
-                return;
-            }
-    
-            // Default to adding an opening parenthesis
-            currentInput += '(';
-            return;
-        }
-    
-        // Append all other valid values
-        currentInput += value;
-    };
-
-
     // Function to evaluate calculation
     const evaluateExpression = () => {
         try {
@@ -150,6 +58,125 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
 
+    // Function to handle appending values
+    const appendValue = (value) => {
+        if (lastButtonWasEquals) {
+            handleEqualsFollowUp(value);
+            return;
+        }
+
+        if (/[0-9]/.test(value)) {
+            handleNumber(value);
+                return;
+        }
+
+        if (operators.includes(value)) {
+            handleOperator(value);
+            return;
+        }
+
+        if (value === '%') {
+            handlePercentage(value);
+            return;
+        }
+    
+        if (value === '.') {
+            handleDecimal(value);
+            return;
+        }
+    
+        if (value === '( )') {
+            handleParentheses(value);
+            return;
+        }  
+    };
+
+
+    /*
+        Helper functions for specific button presses
+    */
+
+    //Function to handle if the '=' flag is set to true
+    const handleEqualsFollowUp = (value) => {
+        if (/[0-9]/.test(value)) {
+            currentInput = value; // If a number is pressed, reset the result display and input the number 
+        } else {
+            currentInput += value; // Append an operator or another spacial character
+        }
+        lastButtonWasEquals = false; // Reset flag!
+    };
+
+    // Handle numbers if the '=' flag is false
+    const handleNumber = (value) => {
+        // If the current input is just "0" and a number is pressed, replace it
+        if (currentInput === '0') {
+            currentInput = value;
+        } else {
+            currentInput += value;
+        }
+    };
+
+    // Handle operators
+    const handleOperator = (value) => {
+        // Prevent operator after '(' (allowing '-' after it)
+        if (currentInput.slice(-1) === '(' && value !== '-') {
+            return;
+        }
+
+        // Prevent multiple consecutive operators
+        if (operators.includes(currentInput.slice(-1))) {
+            currentInput = currentInput.slice(0, -1) + value; // Replace the last operator
+        } else {
+            currentInput += value; // Append the new operator
+        }
+    };
+
+    // Handle percentage button
+    const handlePercentage = (value) => {
+        // Prevent consecutive percentages
+        if (currentInput.slice(-1) === '%') {
+            return;
+        }
+        currentInput += value; // Append the percentage symbol
+    };
+
+    // handle the decimal point
+    const handleDecimal = (value) => {
+        const lastNumber = currentInput.split(/[\+\-\×\÷]/).pop(); // Get the last number segment
+        if (!lastNumber.includes('.')) {
+            currentInput += value; // Append the decimal point only if not already present
+        }
+    };
+
+    // Handle parentheses
+    const handleParentheses = () => {
+        const openParentheses = (currentInput.match(/\(/g) || []).length;
+        const closedParentheses = (currentInput.match(/\)/g) || []).length;
+
+        if (lastButtonWasEquals) {
+            currentInput = '('; // When equals was pressed, reset the input to '('
+            lastButtonWasEquals = false; // Reset flag after using parentheses
+            return;
+        }
+
+        if (currentInput === '0') {
+            currentInput = '('; // Replace default zero with '('
+            return;
+        }
+
+        if (operators.includes(currentInput.slice(-1)) || currentInput.slice(-1) === '(' || currentInput === '') {
+            currentInput += '('; // Add an opening parenthesis
+            return;
+        }
+
+        if (openParentheses > closedParentheses) {
+            currentInput += ')'; // Add a closing parenthesis if it balances the existing open parentheses
+            return;
+        }
+
+        currentInput += '('; // Default to adding an opening parenthesis
+    };
+
 
     // Function to handle button clicks
     const handleButtons = (value) => {
@@ -170,6 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateDisplay(); // Update the display after each press
     };
 
+    
     // Function to add event listeners to buttons and connect buttons data-value with JS
     document.querySelectorAll('button').forEach((button) => {
         // Only add event listener to buttons that are not the theme switch button
