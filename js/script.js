@@ -43,10 +43,12 @@ document.addEventListener('DOMContentLoaded', () => {
     
             // Check the length of the integer part for deciding the format (CHAT GPT CREATION, because I don't understand how Math.js works yet)
             const integerPart = Math.abs(result).toFixed(0); // Get the integer part as a string
+    
+            // Format result to handle both small and large numbers
             const formattedResult = 
                 integerPart.length > 11 // If the integer part has more than 11 digits, use scientific notation
                     ? result.toExponential(5) // Use scientific notation with 5 significant digits
-                    : result.toString().replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, ''); // Remove trailing zeros and avoid ending with a decimal point
+                    : result.toFixed(7).replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, ''); // Remove trailing zeros and avoid ending with a decimal point
     
             recentHistory = `${currentInput}=`; // Add '=' at the end of recentHistory for better visual effect
             currentInput = formattedResult; // Store formatted result in currentInput
