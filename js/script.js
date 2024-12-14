@@ -43,10 +43,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
             // Check the length of the integer part for deciding the format (CHAT GPT CREATION, because I don't understand how Math.js works yet)
             const integerPart = Math.abs(result).toFixed(0); // Get the integer part as a string
-            const formattedResult =
-                integerPart.length > 11 // Check if the integer part has more than 11 digits
+            const formattedResult = 
+                integerPart.length > 11 // If the integer part has more than 11 digits, use scientific notation
                     ? result.toExponential(5) // Use scientific notation with 5 significant digits
-                    : Number(result).toFixed(14).replace(/\.?0+$/, ''); // Use fixed-point and remove trailing zeros for others
+                    : result.toString().replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, ''); // Remove trailing zeros and avoid ending with a decimal point
     
             recentHistory = `${currentInput}=`; // Add '=' at the end of recentHistory for better visual effect
             currentInput = formattedResult; // Store formatted result in currentInput
@@ -123,12 +123,18 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        // Make '-' the only oeprator that replaces default zero
+        if (currentInput === '0' && value === '-') {
+            currentInput = '-';
+        }
+
         // Prevent multiple consecutive operators
         if (operators.includes(currentInput.slice(-1))) {
             currentInput = currentInput.slice(0, -1) + value; // Replace the last operator
         } else {
             currentInput += value; // Append the new operator
         }
+
     };
 
     // Handle percentage button
