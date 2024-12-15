@@ -24,10 +24,20 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
 
-    // Function to delete last character
-    const deleteLastChar = () => {
-        currentInput = currentInput.slice(0, -1); // Return the current input minus the last character
-    };
+    // Function to delete the last character (or operator with spaces)
+const deleteLastChar = () => {
+    // Check if the last characters match the pattern ' operator ' (e.g., ' + ')
+    if (/\s[+\-×÷]\s$/.test(currentInput)) {
+        currentInput = currentInput.slice(0, -3); // Remove the operator and surrounding spaces
+    } else {
+        currentInput = currentInput.slice(0, -1); // Otherwise, remove the last character
+    }
+
+    // Ensure currentInput doesn't end up empty
+    if (currentInput === '') {
+        currentInput = '0';
+    }
+};
 
 
     // Function to evaluate calculation
@@ -103,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (/[0-9]/.test(value)) {
             currentInput = value; // If a number is pressed, reset the result display and input the number 
         } else {
-            currentInput += value; // Append an operator or another spacial character
+            currentInput += ' ' + value + ' '; // Append an operator or another spacial character
         }
         lastButtonWasEquals = false; // Reset flag!
     };
@@ -134,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (operators.includes(currentInput.slice(-1))) {
             currentInput = currentInput.slice(0, -1) + value; // Replace the last operator
         } else {
-            currentInput += value; // Append the new operator
+            currentInput += ' ' + value + ' '; // Append the new operator
         }
 
     };

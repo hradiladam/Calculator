@@ -13,7 +13,7 @@ body {
     gap: 0.8rem;
     grid-template-columns: repeat(4, 4.5rem); 
     grid-auto-rows: 4.8rem;
-    background-color: #f9f9f9;
+    background-color: #838282;
     padding: 1.2rem;
     border-radius: 5px;
     box-shadow: 0 0 5px rgba(34, 34, 34, 0.5);
@@ -26,8 +26,8 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    background-color: #ffffff;
-    color: #5c5c5c;
+    background-color: #ececec;
+    color: #8b8b8b;
     font-size: 2.2rem;
     text-align: right;
     border-radius: 6px;
@@ -57,13 +57,13 @@ body {
     justify-content: center;
     align-items: center;
     color: #585858;
-    background-color: #f2f2f2;
+    background-color: #ececec;
     box-shadow: 0 0 3px rgba(34, 34, 34, 0.5);
     transition: background-color 0.2s ease, outline 0.2s ease;
 }
 
 .button:hover {
-    background-color: #e7e7e7;
+    background-color: #ffffff;
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -74,33 +74,33 @@ body {
 }
 
 .operator {
-    background-color: #c5e2f7;
+    background-color: #9fcef0;
     color: #3f3f3f;
     font-weight: 500;
 }
 
 .operator:hover {
-    background-color: #9cd1f7;
+    background-color: #badef8;
 }
 
 .additional {
-    background-color: #cafcce;
+    background-color: #8ff8be;
     color: #4a4a4a;
     font-weight: 500;
 }
 
 .additional:hover {
-    background-color: #9cf79c;
+    background-color: #bbf7d6;
 }
 
 .button:nth-child(21) {
-    background: linear-gradient(120deg, #c5e2f7, #cafcce);
+    background: linear-gradient(120deg, #9cd1f7, #8ff8be);
     color: #5c5c5c;
     font-size: 1.8rem;
 }
 
 .button:nth-child(21):hover {
-    background: linear-gradient(120deg, #9cd1f7, #9cf79c);
+    background: linear-gradient(120deg, #afd8f5, #bbf7d6);
 }
 
 /* Styling of the change theme button  */
@@ -190,11 +190,6 @@ body.dark-theme .additional:hover {
     background-color: #227c6d;
 }
 
-body.dark-theme #theme-switch {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: #fff;
-}
-
 body.dark-theme .button:nth-child(21) {
     background: linear-gradient(120deg, #af5555, #319282);
     color: #dadada;
@@ -205,9 +200,14 @@ body.dark-theme .button:nth-child(21):hover {
     background: linear-gradient(120deg, #a14040, #227c6d);
 }
 
+body.dark-theme #theme-switch {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #dadada;
+}
+
 body.dark-theme #theme-switch:hover {
     background-color: rgba(245, 245, 245, 0.2);
-    color: #c5ba5a;
+    color: #ffffff;
 }
 
 body.dark-theme #theme-switch:active {
