@@ -5,7 +5,7 @@ body {
     align-items: center;
     min-height: 100vh;
     margin: 0;
-    background: linear-gradient(120deg, #f1f1f1, #e5e5e5);
+    background: linear-gradient(120deg, #e0e0e0, #f1f1f1);
 }
 
 .calculator {
@@ -13,10 +13,10 @@ body {
     gap: 0.8rem;
     grid-template-columns: repeat(4, 4.5rem); 
     grid-auto-rows: 4.8rem;
-    background-color: #838282;
+    background: linear-gradient(120deg, #c9c9c9, #acacac);
     padding: 1.2rem;
     border-radius: 5px;
-    box-shadow: 0 0 5px rgba(34, 34, 34, 0.5);
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
 }
 
 #display {
@@ -27,7 +27,7 @@ body {
     flex-direction: column;
     justify-content: space-between;
     background-color: #ececec;
-    color: #8b8b8b;
+    color: #4e4e4e;
     font-size: 2.2rem;
     text-align: right;
     border-radius: 6px;
@@ -139,12 +139,12 @@ body {
 
 /* Dark theme */
 body.dark-theme {
-    background: linear-gradient(120deg, #313131, #3b3b3b);
+    background: linear-gradient(120deg, #2c2c2c, #0f0f0f);
 }
 
 body.dark-theme .calculator {
-    background: linear-gradient(145deg, #1f1f1f, #2c2c2c);
-    box-shadow: 0 0 5px rgba(187, 187, 187, 0.5);
+    background: linear-gradient(145deg, #161616, #1a1a1a);
+    box-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
 }
 
 body.dark-theme #display {
@@ -160,7 +160,7 @@ body.dark-theme #result {
 body.dark-theme .button {
     background-color: #424242;
     color: #e2e2e2;
-    box-shadow: 0 0 3px rgba(201, 201, 201, 0.5);
+    box-shadow: 0 0 3px rgba(230, 230, 230, 0.65);
 }
 
 body.dark-theme .button:hover {
