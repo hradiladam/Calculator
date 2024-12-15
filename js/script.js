@@ -130,21 +130,25 @@ const deleteLastChar = () => {
 
     // Handle operators
     const handleOperator = (value) => {
+        // Trim trailing spaces to focus on the meaningful part of the input
+        const trimmedInput = currentInput.trim();
+
         // Prevent operator after '(' (allowing '-' after it)
-        if (currentInput.slice(-1) === '(' && value !== '-') {
+        if (trimmedInput.slice(-1) === '(' && value !== '-') {
             return;
         }
 
         // Make '-' the only oeprator that replaces default zero
-        if (currentInput === '0' && value === '-') {
+        if (trimmedInput === '0' && value === '-') {
             currentInput = '-';
         }
 
         // Prevent multiple consecutive operators
-        if (operators.includes(currentInput.slice(-1))) {
-            currentInput = currentInput.slice(0, -1) + value; // Replace the last operator
+        if (operators.includes(trimmedInput.slice(-1))) {
+            // Replace the last operator with the new one
+            currentInput = trimmedInput.slice(0, -1) + ` ${value} `; 
         } else {
-            currentInput += ' ' + value + ' '; // Append the new operator
+            currentInput = `${trimmedInput} ${value} `;
         }
 
     };
@@ -155,11 +159,23 @@ const deleteLastChar = () => {
         if (currentInput.slice(-1) === '%') {
             return;
         }
+
+        // Prevent pressing '%' after an operator with space
+        if (currentInput.slice(-1) === ' ') {
+            return;
+        }
+
         currentInput += value; // Append the percentage symbol
     };
 
     // handle the decimal point
     const handleDecimal = (value) => {
+
+         // Prevent pressing '.' after an operator with space
+        if (currentInput.slice(-1) === ' ') {
+            return;
+        }
+
         const lastNumber = currentInput.split(/[\+\-\×\÷]/).pop(); // Get the last number segment
         if (!lastNumber.includes('.')) {
             currentInput += value; // Append the decimal point only if not already present
