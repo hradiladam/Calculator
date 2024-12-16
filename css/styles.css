@@ -5,7 +5,7 @@ body {
     align-items: center;
     min-height: 100vh;
     margin: 0;
-    background: linear-gradient(120deg, #e0e0e0, #f1f1f1);
+    background: linear-gradient(120deg, #f0f0f0, #d4d4d4);
 }
 
 .calculator {
@@ -13,7 +13,7 @@ body {
     gap: 0.8rem;
     grid-template-columns: repeat(4, 4.5rem); 
     grid-auto-rows: 4.8rem;
-    background: linear-gradient(120deg, #c9c9c9, #acacac);
+    background: linear-gradient(120deg, #d4d4d4, #f0f0f0);
     padding: 1.2rem;
     border-radius: 5px;
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
@@ -115,7 +115,7 @@ body {
     align-items: center;
     cursor: pointer;
     border: none;
-    border-radius: 4px;
+    border-radius: 50%;
     background-color: rgba(51, 51, 51, 0.1);
     color: #424242;
     font-size: 2.5rem;
@@ -139,7 +139,7 @@ body {
 
 /* Dark theme */
 body.dark-theme {
-    background: linear-gradient(120deg, #2c2c2c, #0f0f0f);
+    background: linear-gradient(120deg, #1a1a1a, #161616);
 }
 
 body.dark-theme .calculator {
@@ -160,7 +160,7 @@ body.dark-theme #result {
 body.dark-theme .button {
     background-color: #424242;
     color: #e2e2e2;
-    box-shadow: 0 0 3px rgba(230, 230, 230, 0.65);
+    box-shadow: 0 0 3px rgba(255, 255, 255, 0.65);
 }
 
 body.dark-theme .button:hover {
@@ -218,29 +218,41 @@ body.dark-theme #theme-switch:active {
 
 @media screen and (max-width: 599px) {
 
+    /* Adjust body layout for smaller screens */
     body {
         display: flex;
         justify-content: center;
-        align-items: start;
+        align-items: center;
         margin: 0;
-        margin-top: 1rem;
     }
 
+    /* Resize calculator buttons for smaller screens */
     .calculator {
         gap: 0.7rem;
-        grid-template-columns: repeat(4, 4.2rem); 
-        grid-auto-rows: 4.4rem;
+        grid-template-columns: repeat(4, 3.6rem); 
+        grid-auto-rows: 3.8rem;
         padding: 1rem;
+        margin-bottom: 4rem;
     }
 
     #display {
         font-size: 2rem;
     }
 
+    /* Adjust theme switch button */
     #theme-switch {
+        width: 3.5rem;
+        height: 3.5rem;
+        right: 1rem;
+        font-size: 2rem;
+        border-radius: 50%; 
+        background-color: rgba(51, 51, 51, 0.15);
         top: auto;
         bottom: 1rem;
-        right: 0.5rem;
     }
 
-}
+    #theme-switch:hover {
+        background-color: rgba(51, 51, 51, 0.25);
+        transform: scale(1.05);
+        }
+    }

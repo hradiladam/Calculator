@@ -175,7 +175,7 @@ const deleteLastChar = () => {
         if (currentInput.slice(-1) === ' ') {
             return;
         }
-
+        
         const lastNumber = currentInput.split(/[\+\-\×\÷]/).pop(); // Get the last number segment
         if (!lastNumber.includes('.')) {
             currentInput += value; // Append the decimal point only if not already present
