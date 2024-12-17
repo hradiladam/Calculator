@@ -132,25 +132,26 @@ const deleteLastChar = () => {
     const handleOperator = (value) => {
         // Trim trailing spaces to focus on the meaningful part of the input
         const trimmedInput = currentInput.trim();
-
-        // Prevent operator after '(' (allowing '-' after it)
-        if (trimmedInput.slice(-1) === '(' && value !== '-') {
+    
+        // Prevent operator after '(' (allowing '-' without space)
+        if (trimmedInput.slice(-1) === '(' && value === '-') {
+            currentInput += value; // Append '-' directly after '(' without spaces
             return;
         }
-
-        // Make '-' the only oeprator that replaces default zero
-        if (trimmedInput === '0' && value === '-') {
+    
+        // Replace default '0' with '-' if it's the first input
+        if (currentInput === '0' && value === '-') {
             currentInput = '-';
+            return;
         }
-
+    
         // Prevent multiple consecutive operators
         if (operators.includes(trimmedInput.slice(-1))) {
             // Replace the last operator with the new one
-            currentInput = trimmedInput.slice(0, -1) + ` ${value} `; 
+            currentInput = trimmedInput.slice(0, -1) + ` ${value} `;
         } else {
             currentInput = `${trimmedInput} ${value} `;
         }
-
     };
 
     // Handle percentage button
