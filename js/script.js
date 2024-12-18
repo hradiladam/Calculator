@@ -116,6 +116,9 @@ const deleteLastChar = () => {
         } else if (/[0-9]/.test(value)) {
             // If a number is pressed, reset the input to just the number
             currentInput = value;
+        } else if (value === '%') {
+            // Append '%' directly without spaces
+            currentInput += '%';
         } else {
             // For operators or other values, append them with spaces
             currentInput += ` ${value} `;
@@ -137,45 +140,53 @@ const deleteLastChar = () => {
 
     // Handle operators
     const handleOperator = (value) => {
-        // Check for the last meaningful character
-        const lastChar = currentInput.trim().slice(-1);
-    
-        // Allow only '-' immediately after '('
-        if (lastChar === '(') {
-            if (value === '-') {
-                currentInput += ` ${value} `; // Add '-' after '('
-            }
-            return; // Prevent adding other operators after '('
-        }
-    
-        // Prevent adding an operator directly after another operator
-        if (operators.includes(lastChar)) {
+        // Trim trailing spaces to focus on the meaningful part of the input
+        const trimmedInput = currentInput.trim();
+
+        // Prevent operator after '(' (allowing '-' after it)
+        if (trimmedInput.slice(-1) === '(' && value !== '-') {
             return;
         }
-    
-        // Prevent adding operators after just '-'
-        if (currentInput.slice(-2).trim() === '-') {
-            return;
+
+        // Make '-' the only oeprator that replaces default zero
+        if (trimmedInput === '0' && value === '-') {
+            currentInput = '-';
         }
-    
-        // Allow operators after valid numbers or expressions
-        currentInput = `${currentInput.trim()} ${value} `;
+
+        // Prevent multiple consecutive operators
+        if (operators.includes(trimmedInput.slice(-1))) {
+            // Replace the last operator with the new one
+            currentInput = trimmedInput.slice(0, -1) + ` ${value} `; 
+        } else {
+            currentInput = `${trimmedInput} ${value} `;
+        }
+
     };
 
 
     // Handle percentages
     const handlePercentage = () => {
-        // Prevent '%' after '('
-        if (currentInput === '(' && value === '%') {
+        // Prevent pressing '%' if currentInput already ends with '%'
+        if (currentInput.endsWith('%')) {
             return;
         }
 
-        // Check if the input ends with ' operator ' (e.g., ' + ')
+        // Prevent '%' if the input ends with a space or an operator
         if (/\s[+\-×÷]\s$/.test(currentInput)) {
-            currentInput = currentInput.slice(0, -3) + '%'; // Remove ' operator ' and replace with '%'
-        } else if (!currentInput.endsWith('%')) {
-            currentInput += '%'; // Append '%' if it's not already the last character
+            currentInput = currentInput.slice(0, -3) + '%'; // Replace ' operator ' with '%'
+            return;
         }
+    
+        // Append '%' only if it's not already present and is in a valid position
+        const trimmedInput = currentInput.trim();
+        const lastChar = trimmedInput.slice(-1);
+    
+        // Prevent invalid placement of '%' (e.g., directly after '(')
+        if (lastChar === '(' || operators.includes(lastChar)) {
+            return;
+        }
+    
+        currentInput += '%'; // Append '%' if all conditions are met
     };
     
 
