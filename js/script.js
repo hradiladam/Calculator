@@ -60,7 +60,7 @@ const deleteLastChar = () => {
                     ? result.toExponential(5) // Use scientific notation with 5 significant digits
                     : result.toFixed(7).replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, ''); // Remove trailing zeros and avoid ending with a decimal point
     
-            recentHistory = `${currentInput}=`; // Add '=' at the end of recentHistory for better visual effect
+            recentHistory = `${currentInput} =`; // Add '=' at the end of recentHistory for better visual effect
             currentInput = formattedResult; // Store formatted result in currentInput
             lastButtonWasEquals = true; // Set the flag to true
         } 
@@ -110,12 +110,19 @@ const deleteLastChar = () => {
 
     //Function to handle if the '=' flag is set to true
     const handleEqualsFollowUp = (value) => {
-        if (/[0-9]/.test(value)) {
-            currentInput = value; // If a number is pressed, reset the result display and input the number 
+        if (value === '( )') {
+            // Append '(' directly after '='
+            currentInput += '(';
+        } else if (/[0-9]/.test(value)) {
+            // If a number is pressed, reset the input to just the number
+            currentInput = value;
         } else {
-            currentInput += ' ' + value + ' '; // Append an operator or another spacial character
+            // For operators or other values, append them with spaces
+            currentInput += ` ${value} `;
         }
-        lastButtonWasEquals = false; // Reset flag!
+    
+        // Reset the equals flag to allow normal behavior afterward
+        lastButtonWasEquals = false;
     };
 
     // Handle numbers if the '=' flag is false
@@ -130,31 +137,39 @@ const deleteLastChar = () => {
 
     // Handle operators
     const handleOperator = (value) => {
-        // Trim trailing spaces to focus on the meaningful part of the input
-        const trimmedInput = currentInput.trim();
+        // Check for the last meaningful character
+        const lastChar = currentInput.trim().slice(-1);
     
-        // Prevent operator after '(' (allowing '-' without space)
-        if (trimmedInput.slice(-1) === '(' && value === '-') {
-            currentInput += value; // Append '-' directly after '(' without spaces
+        // Allow only '-' immediately after '('
+        if (lastChar === '(') {
+            if (value === '-') {
+                currentInput += ` ${value} `; // Add '-' after '('
+            }
+            return; // Prevent adding other operators after '('
+        }
+    
+        // Prevent adding an operator directly after another operator
+        if (operators.includes(lastChar)) {
             return;
         }
     
-        // Replace default '0' with '-' if it's the first input
-        if (currentInput === '0' && value === '-') {
-            currentInput = '-';
+        // Prevent adding operators after just '-'
+        if (currentInput.slice(-2).trim() === '-') {
             return;
         }
     
-        // Prevent multiple consecutive operators
-        if (operators.includes(trimmedInput.slice(-1))) {
-            // Replace the last operator with the new one
-            currentInput = trimmedInput.slice(0, -1) + ` ${value} `;
-        } else {
-            currentInput = `${trimmedInput} ${value} `;
-        }
+        // Allow operators after valid numbers or expressions
+        currentInput = `${currentInput.trim()} ${value} `;
     };
 
+
+    // Handle percentages
     const handlePercentage = () => {
+        // Prevent '%' after '('
+        if (currentInput === '(' && value === '%') {
+            return;
+        }
+
         // Check if the input ends with ' operator ' (e.g., ' + ')
         if (/\s[+\-×÷]\s$/.test(currentInput)) {
             currentInput = currentInput.slice(0, -3) + '%'; // Remove ' operator ' and replace with '%'
@@ -182,29 +197,31 @@ const deleteLastChar = () => {
     const handleParentheses = () => {
         const openParentheses = (currentInput.match(/\(/g) || []).length;
         const closedParentheses = (currentInput.match(/\)/g) || []).length;
-
-        if (lastButtonWasEquals) {
-            currentInput = '('; // When equals was pressed, reset the input to '('
-            lastButtonWasEquals = false; // Reset flag after using parentheses
-            return;
-        }
-
+    
+        // If the input is '0', replace it with '('
         if (currentInput === '0') {
-            currentInput = '('; // Replace default zero with '('
+            currentInput = '(';
             return;
         }
-
-        if (operators.includes(currentInput.slice(-1)) || currentInput.slice(-1) === '(' || currentInput === '') {
-            currentInput += '('; // Add an opening parenthesis
+    
+        // Add opening parenthesis if it's appropriate
+        if (
+            operators.includes(currentInput.trim().slice(-1)) ||
+            currentInput.trim().slice(-1) === '(' ||
+            currentInput === ''
+        ) {
+            currentInput += '(';
             return;
         }
-
+    
+        // Add closing parenthesis only if there are unmatched opening parentheses
         if (openParentheses > closedParentheses) {
-            currentInput += ')'; // Add a closing parenthesis if it balances the existing open parentheses
+            currentInput += ')';
             return;
         }
-
-        currentInput += '('; // Default to adding an opening parenthesis
+    
+        // Default to adding an opening parenthesis
+        currentInput += '(';
     };
 
 
