@@ -76,19 +76,19 @@ const deleteLastChar = () => {
             handleEqualsFollowUp(value);
             return;
         }
-
+    
         if (/[0-9]/.test(value)) {
             handleNumber(value);
-                return;
+            return;
         }
-
+    
         if (operators.includes(value)) {
             handleOperator(value);
             return;
         }
-
-        if (value === '%') {
-            handlePercentage(value);
+    
+        if (value === '%') { 
+            handlePercentage();
             return;
         }
     
@@ -100,7 +100,7 @@ const deleteLastChar = () => {
         if (value === '( )') {
             handleParentheses(value);
             return;
-        }  
+        }
     };
 
 
@@ -154,20 +154,15 @@ const deleteLastChar = () => {
         }
     };
 
-    // Handle percentage button
-    const handlePercentage = (value) => {
-        // Prevent consecutive percentages
-        if (currentInput.slice(-1) === '%') {
-            return;
+    const handlePercentage = () => {
+        // Check if the input ends with ' operator ' (e.g., ' + ')
+        if (/\s[+\-×÷]\s$/.test(currentInput)) {
+            currentInput = currentInput.slice(0, -3) + '%'; // Remove ' operator ' and replace with '%'
+        } else if (!currentInput.endsWith('%')) {
+            currentInput += '%'; // Append '%' if it's not already the last character
         }
-
-        // Prevent pressing '%' after an operator with space
-        if (currentInput.slice(-1) === ' ') {
-            return;
-        }
-
-        currentInput += value; // Append the percentage symbol
     };
+    
 
     // handle the decimal point
     const handleDecimal = (value) => {
