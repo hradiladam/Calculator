@@ -166,27 +166,27 @@ const deleteLastChar = () => {
 
     // Handle percentages
     const handlePercentage = () => {
+        // Trim trailing spaces to focus on the meaningful part of the input
+        const trimmedInput = currentInput.trim();
+    
         // Prevent pressing '%' if currentInput already ends with '%'
-        if (currentInput.endsWith('%')) {
-            return;
-        }
-
-        // Prevent '%' if the input ends with a space or an operator
-        if (/\s[+\-×÷]\s$/.test(currentInput)) {
-            currentInput = currentInput.slice(0, -3) + '%'; // Replace ' operator ' with '%'
+        if (trimmedInput.endsWith('%')) {
             return;
         }
     
-        // Append '%' only if it's not already present and is in a valid position
-        const trimmedInput = currentInput.trim();
-        const lastChar = trimmedInput.slice(-1);
+        // If the input ends with an operator (including space), replace the operator and trailing space with '%'
+        if (/\s[+\-×÷]\s$/.test(currentInput)) {
+            currentInput = trimmedInput.slice(0, -3) + '%'; // Remove ' operator ' and append '%'
+            return;
+        }
     
         // Prevent invalid placement of '%' (e.g., directly after '(')
-        if (lastChar === '(' || operators.includes(lastChar)) {
+        if (trimmedInput.slice(-1) === '(') {
             return;
         }
     
-        currentInput += '%'; // Append '%' if all conditions are met
+        // Append '%' if it's in a valid position
+        currentInput += '%';
     };
     
 
