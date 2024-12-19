@@ -40,32 +40,38 @@ const deleteLastChar = () => {
 };
 
 
-    // Function to evaluate calculation
+    // Function to evaluate calculation 
+    // CHAT GPT creation to try and fix inherit JS problems with math.js that I can't fix myself 
     const evaluateExpression = () => {
         try {
             // Replace operators for math.js compatibility
-            const expression = currentInput
+            let expression = currentInput
                 .replace(/×/g, '*') // Change '×' into '*' for math.js
                 .replace(/÷/g, '/'); // Change '÷' into '/' for math.js
     
-            // Use math.js to evaluate the expression
-            const result = math.evaluate(expression); // math.evaluate() evaluates the expression safely
+            // Handle nested percentages behavior
+            while (/(\d+(\.\d+)?)%/.test(expression)) {
+                expression = expression.replace(/(\d+(\.\d+)?)%/, (match, number) => {
+                    // Convert percentage to decimal and apply it sequentially
+                    const percentage = parseFloat(number) * 0.01;
+                    return `(${percentage})`;
+                });
+            }
     
-            // Check the length of the integer part for deciding the format (CHAT GPT CREATION, because I don't understand how Math.js works yet)
-            const integerPart = Math.abs(result).toFixed(0); // Get the integer part as a string
+            // Evaluate the expression using math.js
+            const result = math.evaluate(expression);
     
-            // Format result to handle both small and large numbers
-            const formattedResult = 
-                integerPart.length > 11 // If the integer part has more than 11 digits, use scientific notation
-                    ? result.toExponential(5) // Use scientific notation with 5 significant digits
-                    : result.toFixed(7).replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, ''); // Remove trailing zeros and avoid ending with a decimal point
+            // Format the result to avoid unnecessary trailing zeros
+            const formattedResult = result
+                .toFixed(7) // Format to 7 decimal places
+                .replace(/(\.\d*?)0+$/, '$1') // Trim trailing zeros
+                .replace(/\.$/, ''); // Avoid ending with a period
     
-            recentHistory = `${currentInput} =`; // Add '=' at the end of recentHistory for better visual effect
-            currentInput = formattedResult; // Store formatted result in currentInput
-            lastButtonWasEquals = true; // Set the flag to true
-        } 
-        catch (error) {
-            currentInput = 'error'; // If math.js fails, show an error message
+            recentHistory = `${currentInput} =`; // Update history
+            currentInput = formattedResult; // Update input to the result
+            lastButtonWasEquals = true; // Set the equals flag
+        } catch (error) {
+            currentInput = 'format error'; // Show error on invalid expressions
         }
     };
 
@@ -169,14 +175,9 @@ const deleteLastChar = () => {
         // Trim trailing spaces to focus on the meaningful part of the input
         const trimmedInput = currentInput.trim();
     
-        // Prevent pressing '%' if currentInput already ends with '%'
-        if (trimmedInput.endsWith('%')) {
-            return;
-        }
-    
         // If the input ends with an operator (including space), replace the operator and trailing space with '%'
         if (/\s[+\-×÷]\s$/.test(currentInput)) {
-            currentInput = trimmedInput.slice(0, -3) + '%'; // Remove ' operator ' and append '%'
+            currentInput = trimmedInput.slice(0, -2) + '%'; // Remove ' operator ' and append '%'
             return;
         }
     
