@@ -41,7 +41,7 @@ const deleteLastChar = () => {
 
 
     // Function to evaluate calculation 
-    // CHAT GPT creation to try and fix inherit JS problems with math.js that I can't fix myself 
+    // CHAT GPT creation to try and fix inherit JS problems with math.js that I can't fix myself - I am not that good at math 
     const evaluateExpression = () => {
         try {
             // Replace operators for math.js compatibility
@@ -49,24 +49,40 @@ const deleteLastChar = () => {
                 .replace(/×/g, '*') // Change '×' into '*' for math.js
                 .replace(/÷/g, '/'); // Change '÷' into '/' for math.js
     
-            // Handle nested percentages behavior
-            while (/(\d+(\.\d+)?)%/.test(expression)) {
-                expression = expression.replace(/(\d+(\.\d+)?)%/, (match, number) => {
-                    // Convert percentage to decimal and apply it sequentially
-                    const percentage = parseFloat(number) * 0.01;
-                    return `(${percentage})`;
-                });
+            // Count how many consecutive percentage signs (%) are in the expression
+            const percentageCount = (currentInput.match(/%/g) || []).length;
+    
+            // Remove the percentage signs from the expression for proper evaluation
+            expression = expression.replace(/%/g, '');
+    
+            // Handle normal percentage behavior (e.g., 9% = 9 * 0.01)
+            let result = math.evaluate(expression);
+    
+            // Apply the percentage operation the specified number of times
+            for (let i = 0; i < percentageCount; i++) {
+                result *= 0.01; // Each '%' is treated as multiplying by 0.01
             }
     
-            // Evaluate the expression using math.js
-            const result = math.evaluate(expression);
+            // Format result
+            let formattedResult;
     
-            // Format the result to avoid unnecessary trailing zeros
-            const formattedResult = result
-                .toFixed(7) // Format to 7 decimal places
-                .replace(/(\.\d*?)0+$/, '$1') // Trim trailing zeros
-                .replace(/\.$/, ''); // Avoid ending with a period
+            // Define thresholds for scientific notation
+            const SCIENTIFIC_NOTATION_THRESHOLD = 1e6; // Number greater than or equal to 1 million should use scientific notation
+            const MINIMUM_THRESHOLD = 1e-7; // Smaller than this should also use scientific notation
+            const MAX_DECIMAL_LENGTH = 7; // Number of decimal places
     
+            // If result is too large or too small, convert to scientific notation
+            if (Math.abs(result) >= SCIENTIFIC_NOTATION_THRESHOLD || Math.abs(result) <= MINIMUM_THRESHOLD || result === 0) {
+                formattedResult = result.toExponential(3); // Format to 3 significant digits in scientific notation
+            } else {
+                // Otherwise, use fixed-point format with 7 decimal places
+                formattedResult = result
+                    .toFixed(MAX_DECIMAL_LENGTH) // Format to 7 decimal places
+                    .replace(/(\.\d*?)0+$/, '$1') // Trim trailing zeros
+                    .replace(/\.$/, ''); // Avoid ending with a period
+            }
+    
+            // Update the history and current input
             recentHistory = `${currentInput} =`; // Update history
             currentInput = formattedResult; // Update input to the result
             lastButtonWasEquals = true; // Set the equals flag
