@@ -256,6 +256,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to handle button clicks
     const handleButtons = (value) => {
+
+        // Check if the current input is 'format error' and only allow 'AC' to reset
+        if (currentInput === 'format error' && value !== 'AC') {
+            return; // Do nothing if any button other than 'AC' is pressed
+        }
+
         switch (value) {
             case 'AC':
                 clearAll(); // Clears all inputs
