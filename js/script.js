@@ -60,16 +60,19 @@ const deleteLastChar = () => {
             // Format result
             let formattedResult;
     
-            // Define thresholds for scientific notation
-            const SCIENTIFIC_NOTATION_THRESHOLD = 1e6; // Number greater than or equal to 1 million should use scientific notation
-            const MINIMUM_THRESHOLD = 1e-7; // Smaller than this should also use scientific notation
-            const MAX_DECIMAL_LENGTH = 7; // Number of decimal places
+            // Updated thresholds for scientific notation
+            const SCIENTIFIC_NOTATION_THRESHOLD = 1e15; // Numbers >= 10^15 switch to scientific notation
+            const MINIMUM_THRESHOLD = 1e-15; // Numbers <= 10^-15 switch to scientific notation
+            const MAX_DECIMAL_LENGTH = 15; // Number of decimal places
     
             // If result is too large or too small, convert to scientific notation
-            if (Math.abs(result) >= SCIENTIFIC_NOTATION_THRESHOLD || Math.abs(result) <= MINIMUM_THRESHOLD || result === 0) {
+            if (
+                Math.abs(result) >= SCIENTIFIC_NOTATION_THRESHOLD ||
+                (Math.abs(result) <= MINIMUM_THRESHOLD && result !== 0)
+            ) {
                 formattedResult = result.toExponential(3); // Format to 3 significant digits in scientific notation
             } else {
-                // Otherwise, use fixed-point format with 7 decimal places
+                // Otherwise, use fixed-point format
                 formattedResult = result
                     .toFixed(MAX_DECIMAL_LENGTH) // Format to 7 decimal places
                     .replace(/(\.\d*?)0+$/, '$1') // Trim trailing zeros
@@ -84,6 +87,7 @@ const deleteLastChar = () => {
             currentInput = 'format error'; // Show error on invalid expressions
         }
     };
+    
     
 
 
