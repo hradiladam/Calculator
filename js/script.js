@@ -25,19 +25,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // Function to delete the last character (or operator with spaces)
-const deleteLastChar = () => {
-    // Check if the last characters match the pattern ' operator ' (e.g., ' + ')
-    if (/\s[+\-×÷]\s$/.test(currentInput)) {
-        currentInput = currentInput.slice(0, -3); // Remove the operator and surrounding spaces
-    } else {
-        currentInput = currentInput.slice(0, -1); // Otherwise, remove the last character
-    }
+    const deleteLastChar = () => {
+        // Check if the last characters match the pattern ' operator ' (e.g., ' + ')
+        if (/\s[+\-×÷]\s$/.test(currentInput)) {
+            currentInput = currentInput.slice(0, -3); // Remove the operator and surrounding spaces
+        } else {
+            currentInput = currentInput.slice(0, -1); // Otherwise, remove the last character
+        }
 
-    // Ensure currentInput doesn't end up empty
-    if (currentInput === '') {
-        currentInput = '0';
-    }
-};
+        // Ensure currentInput doesn't end up empty
+        if (currentInput === '') {
+            currentInput = '0';
+        }
+    };
 
 
     // Function to evaluate calculation 
@@ -49,10 +49,11 @@ const deleteLastChar = () => {
                 .replace(/×/g, '*') // Change '×' into '*' for math.js
                 .replace(/÷/g, '/'); // Change '÷' into '/' for math.js
     
-            // Handle percentages contextually
-            expression = expression.replace(/(\d+(\.\d+)?)(\s*[-+*/]\s*)(\d+(\.\d+)?)%/g, (match, base, _, operator, percentage) => {
-                return `${base} ${operator} (${base} * ${percentage} * 0.01)`;
-            });
+            // Replace consecutive percentages by inserting '*' between them
+            expression = expression.replace(/(\d+%)\s*(\d+%)/g, '$1*$2');
+    
+            // Handle percentage followed by a number (e.g., '50%6' -> '50%*6')
+            expression = expression.replace(/(\d+%)\s*(\d+)/g, '$1*$2');
     
             // Evaluate the corrected expression
             let result = math.evaluate(expression);
@@ -60,27 +61,26 @@ const deleteLastChar = () => {
             // Format result
             let formattedResult;
     
-            // Updated thresholds for scientific notation
             const SCIENTIFIC_NOTATION_THRESHOLD = 1e15; // Numbers >= 10^15 switch to scientific notation
             const MINIMUM_THRESHOLD = 1e-15; // Numbers <= 10^-15 switch to scientific notation
-            const MAX_DECIMAL_LENGTH = 14; // Number of decimal places
+            const MAX_DECIMAL_LENGTH = 12; // Number of decimal places
     
-            // If result is too large or too small, convert to scientific notation
             if (
                 Math.abs(result) >= SCIENTIFIC_NOTATION_THRESHOLD ||
                 (Math.abs(result) <= MINIMUM_THRESHOLD && result !== 0)
             ) {
-                formattedResult = result.toExponential(3); // Format to 3 significant digits in scientific notation
+                formattedResult = result.toExponential(3); // Format to scientific notation
             } else {
-                // Otherwise, use fixed-point format
                 formattedResult = result
-                    .toFixed(MAX_DECIMAL_LENGTH) // Format to 7 decimal places
+                    .toFixed(MAX_DECIMAL_LENGTH) // Format to fixed decimal
                     .replace(/(\.\d*?)0+$/, '$1') // Trim trailing zeros
                     .replace(/\.$/, ''); // Avoid ending with a period
             }
     
-            // Update the history and current input
-            recentHistory = `${currentInput} =`; // Update history
+            recentHistory = `${currentInput
+                .replace(/(\d+%)\s*(\d+%)/g, '$1 * $2')  // Add space around * for consecutive percentages
+                .replace(/(\d+%)\s*(\d+)/g, '$1 * $2')} =`; // Add space around * for percentage followed by number
+                
             currentInput = formattedResult; // Update input to the result
             lastButtonWasEquals = true; // Set the equals flag
         } catch (error) {
@@ -88,8 +88,6 @@ const deleteLastChar = () => {
         }
     };
     
-    
-
 
     // Function to handle appending values
     const appendValue = (value) => {
@@ -97,27 +95,27 @@ const deleteLastChar = () => {
             handleEqualsFollowUp(value);
             return;
         }
-    
+
         if (/[0-9]/.test(value)) {
             handleNumber(value);
             return;
         }
-    
+
         if (operators.includes(value)) {
             handleOperator(value);
             return;
         }
-    
+
         if (value === '%') { 
-            handlePercentage();
+            handlePercentage();  // Handle percentage logic
             return;
         }
-    
+
         if (value === '.') {
             handleDecimal(value);
             return;
         }
-    
+
         if (value === '( )') {
             handleParentheses(value);
             return;
@@ -185,23 +183,27 @@ const deleteLastChar = () => {
     };
 
 
-    // Handle percentages
+    // Function to handle percentages
     const handlePercentage = () => {
         // Trim trailing spaces to focus on the meaningful part of the input
         const trimmedInput = currentInput.trim();
-    
-        // If the input ends with an operator (including space), replace the operator and trailing space with '%'
-        if (/\s[+\-×÷]\s$/.test(currentInput)) {
-            currentInput = trimmedInput.slice(0, -2) + '%'; // Remove ' operator ' and append '%'
-            return;
+
+        // Check if the current input ends with a percentage
+        if (trimmedInput.slice(-1) === '%') {
+            // Check if the previous part of the string is a valid number followed by another percentage (e.g., '50%50%')
+            const lastNumber = currentInput.split(/[\+\-\×\÷\(\)]/).pop(); // Get the last number before operator or parentheses
+            if (lastNumber && !lastNumber.includes('%')) {
+                // If it's a valid number, we insert multiplication between percentages
+                currentInput += '*';
+            }
         }
-    
+
         // Prevent invalid placement of '%' (e.g., directly after '(')
         if (trimmedInput.slice(-1) === '(') {
             return;
         }
-    
-        // Append '%' if it's in a valid position
+
+        // Append '%' to the input
         currentInput += '%';
     };
     
