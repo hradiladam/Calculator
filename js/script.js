@@ -63,7 +63,7 @@ const deleteLastChar = () => {
             // Updated thresholds for scientific notation
             const SCIENTIFIC_NOTATION_THRESHOLD = 1e15; // Numbers >= 10^15 switch to scientific notation
             const MINIMUM_THRESHOLD = 1e-15; // Numbers <= 10^-15 switch to scientific notation
-            const MAX_DECIMAL_LENGTH = 15; // Number of decimal places
+            const MAX_DECIMAL_LENGTH = 14; // Number of decimal places
     
             // If result is too large or too small, convert to scientific notation
             if (
