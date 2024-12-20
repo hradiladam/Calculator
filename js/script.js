@@ -49,19 +49,13 @@ const deleteLastChar = () => {
                 .replace(/×/g, '*') // Change '×' into '*' for math.js
                 .replace(/÷/g, '/'); // Change '÷' into '/' for math.js
     
-            // Count how many consecutive percentage signs (%) are in the expression
-            const percentageCount = (currentInput.match(/%/g) || []).length;
+            // Handle percentages contextually
+            expression = expression.replace(/(\d+(\.\d+)?)(\s*[-+*/]\s*)(\d+(\.\d+)?)%/g, (match, base, _, operator, percentage) => {
+                return `${base} ${operator} (${base} * ${percentage} * 0.01)`;
+            });
     
-            // Remove the percentage signs from the expression for proper evaluation
-            expression = expression.replace(/%/g, '');
-    
-            // Handle normal percentage behavior (e.g., 9% = 9 * 0.01)
+            // Evaluate the corrected expression
             let result = math.evaluate(expression);
-    
-            // Apply the percentage operation the specified number of times
-            for (let i = 0; i < percentageCount; i++) {
-                result *= 0.01; // Each '%' is treated as multiplying by 0.01
-            }
     
             // Format result
             let formattedResult;
@@ -90,6 +84,7 @@ const deleteLastChar = () => {
             currentInput = 'format error'; // Show error on invalid expressions
         }
     };
+    
 
 
     // Function to handle appending values
